@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Temporal Phishing Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 80px 0;
+            background: white;
+            margin: 0;
+        }
+
+        section:nth-child(odd) {
+            background: #f8f9fa;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #667eea;
+            text-align: center;
+        }
+
+        section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Problem Statement */
+        .problem-content {
+            background: white;
+            padding: 2rem;
+            border-left: 5px solid #e74c3c;
+            margin: 2rem 0;
+        }
+
+        /* Solution Overview */
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .solution-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .solution-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .solution-card h3 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* How It Works */
+        .workflow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .workflow-step {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            text-align: center;
+        }
+
+        .workflow-step::before {
+            content: attr(data-step);
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .workflow-step h3 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Key Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: #667eea;
+            flex-shrink: 0;
+        }
+
+        .feature-content h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-content p {
+            font-size: 1rem;
+            margin: 0;
+            color: #666;
+        }
+
+        /* Technology Stack */
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .tech-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tech-item h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .use-case-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .use-case-item h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Impact Section */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .impact-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .impact-item h3 {
+            color: #e74c3c;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .footer-section p {
+            font-size: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.05rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            section h2 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            .nav-links {
+                gap: 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero p {
+                font-size: 0.95rem;
+            }
+
+            section h2 {
+                font-size: 1.5rem;
+            }
+
+            .features-grid,
+            .tech-stack,
+            .use-cases,
+            .impact-grid,
+            .solution-grid,
+            .workflow {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* Scrolling Animation */
+        section {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="container">
+            <div class="logo">🔐 Temporal Phishing Detection</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="/detect">Detection</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>🛡️ AI-Based Temporal Phishing Detection System</h1>
+            <p>Detect evolving phishing attacks in real time using Temporal Natural Language Processing and Deep Learning</p>
+            <div class="hero-buttons">
+                <a href="/detect" class="btn btn-primary">✅ Try Spam Detection</a>
+                <a href="/dashboard" class="btn btn-secondary">📊 View Dashboard</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement -->
+    <section id="problem">
+        <div class="container">
+            <h2>⚠️ The Problem: Evolving Phishing Threats</h2>
+            <div class="problem-content">
+                <p>Phishing attacks are one of the most dangerous and rapidly evolving cybersecurity threats. Attackers frequently change their language, URLs, and social engineering techniques to evade traditional detection systems. Conventional spam filters struggle to adapt to these evolving patterns, resulting in:</p>
+                <ul style="margin-left: 2rem; font-size: 1.1rem; color: #555;">
+                    <li>Identity theft and fraud</li>
+                    <li>Banking and financial losses</li>
+                    <li>Corporate data breaches</li>
+                    <li>Compromised personal information</li>
+                </ul>
+            </div>
+            <p style="text-align: center; font-style: italic; color: #e74c3c; margin-top: 2rem;">This project addresses this challenge by introducing Temporal NLP-based phishing detection that learns from time-based patterns in phishing behavior.</p>
+        </div>
+    </section>
+
+    <!-- Solution Overview -->
+    <section id="solution">
+        <div class="container">
+            <h2>💡 Our Solution: AI-Powered Detection</h2>
+            <p style="text-align: center;">The proposed system uses Artificial Intelligence, Machine Learning, and Temporal NLP to automatically analyze email content, extract security-related features, and detect threats:</p>
+            <div class="solution-grid">
+                <div class="solution-card">
+                    <h3>✅ Safe (Not Spam)</h3>
+                    <p>Legitimate emails are identified and verified as safe for the user.</p>
+                </div>
+                <div class="solution-card">
+                    <h3>🚨 Spam / Phishing</h3>
+                    <p>Malicious emails are detected with confidence scores for enhanced security awareness.</p>
+                </div>
+                <div class="solution-card">
+                    <h3>⏰ Temporal Adaptation</h3>
+                    <p>The system adapts to changing attack strategies and improves detection accuracy over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works">
+        <div class="container">
+            <h2>🔄 How It Works</h2>
+            <p style="text-align: center;">The system follows a four-step intelligent workflow:</p>
+            <div class="workflow">
+                <div class="workflow-step" data-step="1">
+                    <h3>📧 Input</h3>
+                    <p>User pastes an email into the Spam Detection page</p>
+                </div>
+                <div class="workflow-step" data-step="2">
+                    <h3>🔍 Analysis</h3>
+                    <p>System performs feature extraction and temporal pattern analysis</p>
+                </div>
+                <div class="workflow-step" data-step="3">
+                    <h3>🧠 Prediction</h3>
+                    <p>Trained deep learning model evaluates the email content</p>
+                </div>
+                <div class="workflow-step" data-step="4">
+                    <h3>📊 Result</h3>
+                    <p>System displays prediction (Spam/Not Spam) with confidence score</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features -->
+    <section id="features">
+        <div class="container">
+            <h2>⭐ Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-content">
+                        <h3>Real-time Detection</h3>
+                        <p>Instant spam and phishing detection powered by AI</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-content">
+                        <h3>Evolving Patterns</h3>
+                        <p>Detection of changing phishing attack strategies</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-content">
+                        <h3>Temporal Analysis</h3>
+                        <p>Trend analysis of phishing behavior over time</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔗</div>
+                    <div class="feature-content">
+                        <h3>URL Detection</h3>
+                        <p>Keyword and URL-based phishing identification</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💳</div>
+                    <div class="feature-content">
+                        <h3>Fraud Detection</h3>
+                        <p>OTP, banking, and loan fraud detection capabilities</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-content">
+                        <h3>Analytics Dashboard</h3>
+                        <p>Model performance visualization and insights</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack -->
+    <section id="tech">
+        <div class="container">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <h4>🐍 Python</h4>
+                    <p>Core programming language</p>
+                </div>
+                <div class="tech-item">
+                    <h4>⚙️ Flask</h4>
+                    <p>Web framework for API</p>
+                </div>
+                <div class="tech-item">
+                    <h4>🔥 PyTorch</h4>
+                    <p>Deep learning framework</p>
+                </div>
+                <div class="tech-item">
+                    <h4>📊 Scikit-learn</h4>
+                    <p>ML algorithms & metrics</p>
+                </div>
+                <div class="tech-item">
+                    <h4>📝 NLP</h4>
+                    <p>Natural Language Processing</p>
+                </div>
+                <div class="tech-item">
+                    <h4>📈 Pandas & NumPy</h4>
+                    <p>Data manipulation</p>
+                </div>
+                <div class="tech-item">
+                    <h4>📉 Matplotlib & Seaborn</h4>
+                    <p>Data visualization</p>
+                </div>
+                <div class="tech-item">
+                    <h4>🧠 Deep Learning</h4>
+                    <p>Neural networks & ML</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section id="usecases">
+        <div class="container">
+            <h2>💼 Use Cases & Applications</h2>
+            <p style="text-align: center;">This system can be deployed across multiple industries and sectors:</p>
+            <div class="use-cases">
+                <div class="use-case-item">
+                    <h4>🏦 Banking & Finance</h4>
+                    <p>Protect customer accounts from financial phishing</p>
+                </div>
+                <div class="use-case-item">
+                    <h4>🏢 Corporate Security</h4>
+                    <p>Email protection for enterprise organizations</p>
+                </div>
+                <div class="use-case-item">
+                    <h4>🎓 Education</h4>
+                    <p>Email security for educational institutions</p>
+                </div>
+                <div class="use-case-item">
+                    <h4>🏛️ Government</h4>
+                    <p>Cybersecurity for government platforms</p>
+                </div>
+                <div class="use-case-item">
+                    <h4>📚 Research</h4>
+                    <p>Cybercrime research and analysis</p>
+                </div>
+                <div class="use-case-item">
+                    <h4>👥 Training</h4>
+                    <p>Public awareness and security training programs</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section id="impact">
+        <div class="container">
+            <h2>🎯 Objective & Impact</h2>
+            <div class="highlight-box">
+                To develop an intelligent phishing detection system that adapts to evolving attack patterns using Temporal NLP and deep learning, providing robust real-time protection.
+            </div>
+            <p style="text-align: center; margin: 2rem 0;">This system helps prevent:</p>
+            <div class="impact-grid">
+                <div class="impact-item">
+                    <h3>💰 Financial Fraud</h3>
+                    <p>Protect users from losing money to phishing scams and unauthorized transactions.</p>
+                </div>
+                <div class="impact-item">
+                    <h3>🔑 Identity Theft</h3>
+                    <p>Prevent attackers from stealing personal and sensitive information.</p>
+                </div>
+                <div class="impact-item">
+                    <h3>📂 Data Breaches</h3>
+                    <p>Block access to corporate and personal data through phishing attacks.</p>
+                </div>
+                <div class="impact-item">
+                    <h3>🎭 Social Engineering</h3>
+                    <p>Detect and block sophisticated social engineering attack techniques.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="team">
+        <div class="container">
+           
+            <div class="footer-bottom">
+                <p>&copy; 2024-2025 AI-Based Temporal Phishing Detection System. All rights reserved.</p>
+               </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Stagger animation for sections
+        const sections = document.querySelectorAll('section');
+        sections.forEach((section, index) => {
+            section.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>

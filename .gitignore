@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+server.log
+app.log
+
+# Local development
+instance/
+*.db
+*.sqlite
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Cache
+*.cache
+.cache/
+
+# Documentation files (keep if needed)
+# LANDING_PAGE_DOCUMENTATION.md
+# PREPROCESSING_ANALYSIS.md
+# PREPROCESSING_QUICK_REFERENCE.md
+
+# Data files (optional - can commit smaller CSV files)
+# final.csv
