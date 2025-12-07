@@ -11,4 +11,4 @@ RUN python3 -c "from sentence_transformers import SentenceTransformer; SentenceT
 COPY . .
 
 ENV PORT=8000
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8000", "--timeout", "120", "--workers", "2"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8000", "--timeout", "120", "--workers", "1"]
