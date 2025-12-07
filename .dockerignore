@@ -1,0 +1,15 @@
+__pycache__
+*.pyc
+*.pyo
+.git
+.gitignore
+.DS_Store
+*.log
+venv/
+.venv/
+.env
+.idea
+.vscode
+download_model.sh
+DEPLOYMENT_*.md
+DEPLOY_NOW.md
