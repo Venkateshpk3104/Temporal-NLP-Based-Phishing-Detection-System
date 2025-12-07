@@ -15,11 +15,17 @@ import base64
 matplotlib.use('Agg')  # Non-interactive backend
 
 # ===============================
-# 0. LOAD SENTENCE TRANSFORMER
+# 0. LAZY LOAD SENTENCE TRANSFORMER
 # ===============================
-print("⏳ Loading SentenceTransformer model...")
-embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-print("✅ SentenceTransformer loaded (384-dim embeddings)")
+embedding_model = None
+
+def get_embedding_model():
+    global embedding_model
+    if embedding_model is None:
+        print("⏳ Loading SentenceTransformer model...")
+        embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        print("✅ SentenceTransformer loaded (384-dim embeddings)")
+    return embedding_model
 
 # ===============================
 # 1. MODEL ARCHITECTURE (MUST MATCH TRAINING)
@@ -194,13 +200,14 @@ def extract_features_from_email(text: str) -> np.ndarray:
     features["max_subdomains"] = 0
 
     # -------- SENTENCE EMBEDDINGS (384-dim from MiniLM) --------
-    embedding = embedding_model.encode(text_original, convert_to_numpy=True)
+    embedding = get_embedding_model().encode(text_original, convert_to_numpy=True)
     for i in range(len(embedding)):
         features[f"emb_{i}"] = embedding[i]
 
     # -------- FINAL FEATURE VECTOR IN TRAINING ORDER --------
     vector = [features.get(col, 0) for col in input_cols]
     return np.array(vector, dtype=np.float32)
+
 
 # ===============================
 # 4. FLASK APP
