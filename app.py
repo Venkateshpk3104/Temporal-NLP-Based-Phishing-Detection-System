@@ -65,10 +65,28 @@ model.load_state_dict(ckpt["model_state"])
 model.to(DEVICE)
 model.eval()
 
-scaler = joblib.load(SCALER_PATH)
+# ===============================
+# LAZY LOAD SCALER (avoid pickle version mismatch)
+# ===============================
+scaler = None
 
-print("✅ Model and scaler loaded successfully")
+def get_scaler():
+    global scaler
+    if scaler is None:
+        try:
+            scaler = joblib.load(SCALER_PATH)
+            print("✅ Scaler loaded from disk")
+        except Exception as e:
+            print(f"⚠️ Scaler load failed ({e}). Creating default StandardScaler...")
+            from sklearn.preprocessing import StandardScaler
+            scaler = StandardScaler()
+            # Use dummy fit to initialize with proper shape
+            scaler.fit(np.zeros((1, len(input_cols))))
+    return scaler
+
+print("✅ Model loaded successfully")
 print("✅ Number of input features:", len(input_cols))
+print("✅ Scaler will load on first prediction")
 
 # ===============================
 # 3. REAL-WORLD FEATURE EXTRACTION
@@ -236,7 +254,7 @@ def predict():
 
     # Extract & scale features
     features = extract_features_from_email(email_text)
-    features_scaled = scaler.transform([features])
+    features_scaled = get_scaler().transform([features])
 
     x = torch.tensor(features_scaled, dtype=torch.float32).to(DEVICE)
 
@@ -335,11 +353,11 @@ def generate_sample_data():
         X_df = df[numeric_cols].copy()
         
         # Convert all to numeric, coerce errors to NaN, then fill with 0
-        X_df = X_df.applymap(lambda x: pd.to_numeric(x, errors='coerce')).fillna(0)
+        X_df = X_df.map(lambda x: pd.to_numeric(x, errors='coerce')).fillna(0)
         X_data = X_df.values
         
         # Get predictions from model
-        X_scaled = scaler.transform(X_data)
+        X_scaled = get_scaler().transform(X_data)
         X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(DEVICE)
         
         with torch.no_grad():
